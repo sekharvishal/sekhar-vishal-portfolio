@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Palettes. Colours are RGB triplets so Tailwind can apply alpha.      */
+/* Dark  = Obsidian & Gold.   Light = Ivory & Ink.                      */
+/* ------------------------------------------------------------------ */
+:root,
+:root[data-theme='dark'] {
+  --c-bg: 10 10 11;
+  --c-surface: 22 21 20;
+  --c-fg: 242 236 224;
+  --c-muted: 168 160 146;
+  --c-gold: 201 162 75;
+  --c-line: 255 255 255;
+  --glass-bg: rgb(255 255 255 / 0.08);
+  --glass-border: rgb(255 255 255 / 0.2);
+  --fallback-bg: radial-gradient(120% 90% at 50% 0%, #2a2112 0%, #0a0a0b 60%);
+}
+
+:root[data-theme='light'] {
+  --c-bg: 246 242 234;
+  --c-surface: 255 252 246;
+  --c-fg: 17 17 17;
+  --c-muted: 88 84 76;
+  --c-gold: 154 116 32;
+  --c-line: 17 17 17;
+  --glass-bg: rgb(255 255 255 / 0.62);
+  --glass-border: rgb(17 17 17 / 0.14);
+  --fallback-bg: radial-gradient(120% 90% at 50% 0%, #fffaf0 0%, #f6f2ea 60%);
+}
+
+@layer base {
+  html {
+    background: rgb(var(--c-bg));
+    color: rgb(var(--c-fg));
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply font-sans antialiased;
+    margin: 0;
+    min-height: 100vh;
+    background: transparent;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: rgb(var(--c-gold) / 0.35);
+  }
+  a,
+  button {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold;
+  }
+}
+
+@layer components {
+  /* Glassmorphism. Dark theme ~ bg-white/10 + border-white/20 + blur. */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(var(--glass-blur, 12px));
+    backdrop-filter: blur(var(--glass-blur, 12px));
+    box-shadow: 0 8px 40px -12px rgb(0 0 0 / 0.45);
+  }
+  .eyebrow {
+    @apply font-mono text-xs uppercase tracking-[0.32em] text-gold;
+  }
+  .btn {
+    @apply pointer-events-auto inline-flex items-center justify-center rounded-full border border-gold/60 px-6 py-3 font-mono text-xs uppercase tracking-[0.2em] text-fg transition hover:bg-gold hover:text-bg;
+  }
+  .btn-solid {
+    @apply bg-gold text-bg hover:bg-transparent hover:text-fg;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full border border-line/20 px-3 py-1 font-mono text-[0.7rem] tracking-wide text-muted;
+  }
+}
+
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Grand Finale: section cards give way to the dashboard (beats GSAP inline styles). */
+[data-finale='on'] [data-card] {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.fallback-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--fallback-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

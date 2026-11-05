@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sekhar Vishal | Full Stack Java Developer</title>
+    <meta
+      name="description"
+      content="Portfolio of Sekhar Vishal, a Full Stack Java Developer building scalable, secure web applications with Java, Spring Boot, Angular, cloud and AI."
+    />
+    <meta name="theme-color" content="#0a0a0b" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href="https://example.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sekhar Vishal | Full Stack Java Developer" />
+    <meta
+      property="og:description"
+      content="A cinematic 3D portfolio: Java, Spring Boot, Angular, cloud and AI."
+    />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Sekhar Vishal",
+        "jobTitle": "Full Stack Java Developer",
+        "worksFor": { "@type": "Organization", "name": "SecureW2" },
+        "alumniOf": "Mother Theresa Institute of Engineering and Technology",
+        "knowsAbout": ["Java", "Spring Boot", "Angular", "REST APIs", "MySQL", "MongoDB", "RabbitMQ", "AWS Lambda", "Generative AI"]
+      }
+    </script>
+
+    <script>
+      // Apply the stored / system theme before first paint to avoid a flash.
+      try {
+        var stored = localStorage.getItem('sv-theme')
+        var theme = stored === 'light' || stored === 'dark' ? stored : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+        document.documentElement.setAttribute('data-theme', theme)
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p style="padding: 2rem; font-family: sans-serif">
+        Sekhar Vishal, Full Stack Java Developer (Java, Spring Boot, Angular, Cloud, AI). Please enable JavaScript to view
+        the full portfolio.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
