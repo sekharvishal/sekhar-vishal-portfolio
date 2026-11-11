@@ -10,7 +10,7 @@ import { carPose } from '../state/scrollStoreCity'
 const MAX_OFFSET = 0.006
 
 /**
- * Cinematic lens pipeline for the City Drive variant: same structure as the
+ * Cinematic lens pipeline for the Neon Run variant: same structure as the
  * statue's `Effects.tsx`, but DoF focuses on the car and the chromatic
  * aberration follows the car's speed instead of scroll velocity.
  */

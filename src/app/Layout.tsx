@@ -25,12 +25,12 @@ function useRouteEffects() {
   const lenis = useLenis()
 
   useEffect(() => {
-    scrollStore.parked = pathname !== '/'
+    scrollStore.parked = pathname !== '/statue'
   }, [pathname])
 
   useEffect(() => {
-    // A hash on the home route is handled by HomePage; everything else starts at the top.
-    if (!hash || pathname !== '/') {
+    // A hash on the statue route is handled by HomePage; everything else starts at the top.
+    if (!hash || pathname !== '/statue') {
       if (lenis) lenis.scrollTo(0, { immediate: true, force: true })
       else window.scrollTo(0, 0)
     }
@@ -60,7 +60,7 @@ export function Layout() {
       </a>
       <div className="fallback-backdrop" aria-hidden="true" />
       {/* Reduced motion / no WebGL: the gradient backdrop stands in for the canvas. */}
-      {!staticMode && pathname !== '/city' && (
+      {!staticMode && pathname !== '/city' && pathname !== '/nexus' && pathname !== '/frontier' && (
         <Suspense fallback={<SceneLoader />}>
           <Scene />
         </Suspense>

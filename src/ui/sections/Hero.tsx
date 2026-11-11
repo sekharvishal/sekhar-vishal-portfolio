@@ -16,17 +16,17 @@ export function Hero() {
         <h1 id="hero-title" className="mt-4 text-6xl leading-[0.95] md:text-8xl">
           {profile.name}
         </h1>
-        <p className="mt-3 font-display text-2xl italic text-gold md:text-3xl">{profile.role}</p>
-        <p className="mt-6 max-w-xl text-xl text-fg md:text-2xl">{profile.headline}</p>
-        <p className="mt-3 max-w-xl text-muted">{profile.subheadline}</p>
-        <ul className="mt-6 flex flex-wrap gap-2" aria-label="Core technologies">
+        <p data-reveal-item="" className="mt-3 font-display text-2xl italic text-gold md:text-3xl">{profile.role}</p>
+        <p data-reveal-item="" className="mt-6 max-w-xl text-xl text-fg md:text-2xl">{profile.headline}</p>
+        <p data-reveal-item="" className="mt-3 max-w-xl text-muted">{profile.subheadline}</p>
+        <ul data-reveal-item="" className="mt-6 flex flex-wrap gap-2" aria-label="Core technologies">
           {['Java', 'Spring Boot', 'Angular', 'Cloud & AI'].map((t) => (
             <li key={t} className="chip pointer-events-auto">
               {t}
             </li>
           ))}
         </ul>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div data-reveal-item="" className="mt-8 flex flex-wrap gap-3">
           <button type="button" className="btn btn-solid" onClick={() => go('projects')}>
             View Projects
           </button>

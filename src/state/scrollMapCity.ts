@@ -1,4 +1,4 @@
-/** Pure helpers for the City Drive variant: scroll stops, dwell remap, finale thresholds. */
+/** Pure helpers for the Neon Run variant: scroll stops, dwell remap, finale thresholds. */
 import { clamp01, mapRange } from './scrollMap'
 
 export { clamp01, mapRange }

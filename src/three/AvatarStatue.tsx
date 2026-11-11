@@ -116,8 +116,12 @@ function buildGeometries() {
     step2: new CylinderGeometry(2.0, 2.2, 0.4, 64),
     step3: new CylinderGeometry(1.5, 1.7, 0.4, 64),
     baseRing: flatRing(2.35, 0.035),
+    baseOrbit: flatRing(2.65, 0.025),
     body: new CylinderGeometry(0.85, 1.15, 3.2, 48),
     shoulders,
+    shoulderCap: new SphereGeometry(0.48, 24, 16),
+    chestRing: new TorusGeometry(0.32, 0.035, 10, 32),
+    armTrim: flatRing(0.29, 0.018),
     core: new IcosahedronGeometry(0.16, 1),
     arm: new CapsuleGeometry(0.26, 1.8, 8, 16),
     neck: new CylinderGeometry(0.3, 0.4, 0.5, 24),
@@ -149,6 +153,9 @@ function ProceduralStatue({ partsRef, clip, theme }: { partsRef: PartRef; clip: 
   const rightArm = useRef<Group>(null)
   const head = useRef<Group>(null)
   const halo = useRef<Mesh>(null)
+  const baseOrbit = useRef<Mesh>(null)
+  const core = useRef<Mesh>(null)
+  const chestRing = useRef<Mesh>(null)
 
   useLayoutEffect(() => {
     const register = (part: StatuePart, ref: MutableRefObject<Group | null>, materials: Material[]) => {
@@ -156,8 +163,8 @@ function ProceduralStatue({ partsRef, clip, theme }: { partsRef: PartRef; clip: 
     }
     register('Base', base, [mat.body.Base, mat.accent.Base])
     register('Torso', torso, [mat.body.Torso, mat.accent.Torso])
-    register('LeftArm', leftArm, [mat.body.LeftArm])
-    register('RightArm', rightArm, [mat.body.RightArm])
+    register('LeftArm', leftArm, [mat.body.LeftArm, mat.accent.Torso])
+    register('RightArm', rightArm, [mat.body.RightArm, mat.accent.Torso])
     register('Head', head, [mat.body.Head, mat.accent.Head])
     const parts = partsRef.current
     return () => {
@@ -193,8 +200,15 @@ function ProceduralStatue({ partsRef, clip, theme }: { partsRef: PartRef; clip: 
     [mat],
   )
 
-  useFrame((_, delta) => {
-    if (halo.current) halo.current.rotation.y += Math.min(delta, 0.1) * 0.5
+  useFrame((state) => {
+    const time = state.clock.elapsedTime
+    if (halo.current) halo.current.rotation.z = Math.sin(time * 0.45) * 0.08
+    if (baseOrbit.current) baseOrbit.current.rotation.z = Math.sin(time * 0.3) * 0.035
+    if (core.current) {
+      core.current.scale.setScalar(0.9 + Math.sin(time * 1.8) * 0.08)
+      core.current.rotation.y = time * 0.35
+    }
+    if (chestRing.current) chestRing.current.rotation.z = time * 0.12
   })
 
   const m = mat.body
@@ -205,18 +219,26 @@ function ProceduralStatue({ partsRef, clip, theme }: { partsRef: PartRef; clip: 
         <mesh geometry={geo.step2} material={m.Base} position={[0, 0.6, 0]} castShadow receiveShadow />
         <mesh geometry={geo.step3} material={m.Base} position={[0, 1.0, 0]} castShadow receiveShadow />
         <mesh geometry={geo.baseRing} material={mat.accent.Base} position={[0, 0.41, 0]} />
+        <mesh ref={baseOrbit} geometry={geo.baseOrbit} material={mat.accent.Base} position={[0, 0.24, 0]} />
       </group>
 
       <group ref={torso} name="Torso" position={[0, 1.2, 0]}>
         <mesh geometry={geo.body} material={m.Torso} position={[0, 1.6, 0]} castShadow receiveShadow />
         <mesh geometry={geo.shoulders} material={m.Torso} position={[0, 3.0, 0]} castShadow receiveShadow />
-        <mesh geometry={geo.core} material={mat.accent.Torso} position={[0, 2.0, 1.0]} />
+        <mesh ref={core} geometry={geo.core} material={mat.accent.Torso} position={[0, 2.0, 1.0]} />
+        <mesh ref={chestRing} geometry={geo.chestRing} material={mat.accent.Torso} position={[0, 2.0, 1.04]} />
       </group>
 
       <group ref={leftArm} name="LeftArm" position={[-1.45, 2.2, 0]}>
+        <mesh geometry={geo.shoulderCap} material={mat.accent.Torso} position={[0, 2.05, 0]} scale={[0.95, 0.7, 0.8]} />
+        <mesh geometry={geo.armTrim} material={mat.accent.Torso} position={[0, 0.35, 0]} />
+        <mesh geometry={geo.armTrim} material={mat.accent.Torso} position={[0, 1.9, 0]} />
         <mesh geometry={geo.arm} material={m.LeftArm} position={[0, 1.16, 0]} rotation={[0, 0, 0.06]} castShadow receiveShadow />
       </group>
       <group ref={rightArm} name="RightArm" position={[1.45, 2.2, 0]}>
+        <mesh geometry={geo.shoulderCap} material={mat.accent.Torso} position={[0, 2.05, 0]} scale={[0.95, 0.7, 0.8]} />
+        <mesh geometry={geo.armTrim} material={mat.accent.Torso} position={[0, 0.35, 0]} />
+        <mesh geometry={geo.armTrim} material={mat.accent.Torso} position={[0, 1.9, 0]} />
         <mesh geometry={geo.arm} material={m.RightArm} position={[0, 1.16, 0]} rotation={[0, 0, -0.06]} castShadow receiveShadow />
       </group>
 

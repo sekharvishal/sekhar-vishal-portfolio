@@ -1,7 +1,7 @@
 import { Quaternion, Vector3 } from 'three'
 
 /**
- * Mutable, NON-reactive store for the City Drive variant. Mirrors `scrollStore.ts`
+ * Mutable, NON-reactive store for the Neon Run variant. Mirrors `scrollStore.ts`
  * but is kept entirely separate so the two experiences never share mutable
  * per-frame state (written by `HomePageCity`'s scroll bridge, read inside `useFrame`).
  */

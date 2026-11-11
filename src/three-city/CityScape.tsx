@@ -15,10 +15,11 @@ import type { SceneTheme } from '../app/theme'
 import type { TierSettings } from '../hooks/useDeviceTier'
 import { disposeGeometry, disposeMaterial } from '../three/disposal'
 import { buildCityLayout } from './cityLayout'
-import { ROAD_LENGTH, ROAD_WIDTH, buildRoadGeometry } from './roadPath'
+import { ROAD_LENGTH, ROAD_WIDTH, buildRoadGeometry, frameAtAlloc } from './roadPath'
 
 /** Fixed so the skyline is identical across reloads (and testable via `cityLayout.test.ts`). */
 const CITY_SEED = 20261026
+const LANE_MARKER_COUNT = 100
 
 function buildWindowTexture(litColor: string): CanvasTexture {
   const size = 64
@@ -27,13 +28,18 @@ function buildWindowTexture(litColor: string): CanvasTexture {
   canvas.height = size
   const ctx = canvas.getContext('2d')
   if (ctx) {
+    let seed = 0x51f15e
+    const random = () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0
+      return seed / 4294967296
+    }
     ctx.fillStyle = '#05050a'
     ctx.fillRect(0, 0, size, size)
     ctx.fillStyle = litColor
     const cell = 8
     for (let y = 2; y < size; y += cell) {
       for (let x = 2; x < size; x += cell) {
-        if (Math.random() > 0.45) ctx.fillRect(x, y, cell - 4, cell - 4)
+        if (random() > 0.45) ctx.fillRect(x, y, cell - 4, cell - 4)
       }
     }
   }
@@ -60,6 +66,16 @@ export function CityScape({ theme, tier }: { theme: SceneTheme; tier: TierSettin
   const buildingGeometry = useMemo(() => new BoxGeometry(1, 1, 1), [])
   const lampPoleGeometry = useMemo(() => new CylinderGeometry(0.05, 0.07, 3.2, 8), [])
   const lampBulbGeometry = useMemo(() => new SphereGeometry(0.16, 12, 12), [])
+  const laneMarkerGeometry = useMemo(() => new BoxGeometry(0.12, 0.025, 0.9), [])
+  const edgeMarkerGeometry = useMemo(() => new BoxGeometry(0.07, 0.035, 1.35), [])
+  const laneMarkerMaterial = useMemo(
+    () => new MeshStandardMaterial({ color: theme.keyLight, emissive: theme.keyLight, emissiveIntensity: 0.25, toneMapped: false }),
+    [theme.keyLight],
+  )
+  const edgeMarkerMaterial = useMemo(
+    () => new MeshStandardMaterial({ color: theme.statueEmissive, emissive: theme.statueEmissive, emissiveIntensity: 0.55, toneMapped: false }),
+    [theme.statueEmissive],
+  )
 
   const windowTexture = useMemo(() => buildWindowTexture(theme.keyLight), [theme.keyLight])
 
@@ -86,6 +102,8 @@ export function CityScape({ theme, tier }: { theme: SceneTheme; tier: TierSettin
   const buildingsRef = useRef<InstancedMesh>(null)
   const polesRef = useRef<InstancedMesh>(null)
   const bulbsRef = useRef<InstancedMesh>(null)
+  const laneMarkersRef = useRef<InstancedMesh>(null)
+  const edgeMarkersRef = useRef<InstancedMesh>(null)
 
   useEffect(() => {
     const mesh = buildingsRef.current
@@ -121,13 +139,46 @@ export function CityScape({ theme, tier }: { theme: SceneTheme; tier: TierSettin
     bulbs.instanceMatrix.needsUpdate = true
   }, [layout])
 
+  useEffect(() => {
+    const markers = laneMarkersRef.current
+    if (!markers) return
+    for (let i = 0; i < LANE_MARKER_COUNT; i++) {
+      const frame = frameAtAlloc(i / (LANE_MARKER_COUNT - 1))
+      _object.position.copy(frame.position)
+      _object.position.y += 0.035
+      _object.quaternion.copy(frame.quaternion)
+      _object.scale.set(1, 1, 1)
+      _object.updateMatrix()
+      markers.setMatrixAt(i, _object.matrix)
+    }
+    markers.instanceMatrix.needsUpdate = true
+  }, [])
+
+  useEffect(() => {
+    const markers = edgeMarkersRef.current
+    if (!markers) return
+    let index = 0
+    for (let i = 0; i < LANE_MARKER_COUNT; i++) {
+      const frame = frameAtAlloc(i / (LANE_MARKER_COUNT - 1))
+      for (const side of [-1, 1]) {
+        _object.position.copy(frame.position).addScaledVector(frame.normal, side * (ROAD_WIDTH / 2 - 0.22))
+        _object.position.y += 0.03
+        _object.quaternion.copy(frame.quaternion)
+        _object.scale.set(1, 1, 1)
+        _object.updateMatrix()
+        markers.setMatrixAt(index++, _object.matrix)
+      }
+    }
+    markers.instanceMatrix.needsUpdate = true
+  }, [])
+
   useEffect(
     () => () => {
-      disposeGeometry([roadGeometry, groundGeometry, buildingGeometry, lampPoleGeometry, lampBulbGeometry])
-      disposeMaterial([roadMaterial, groundMaterial, buildingMaterial, lampPoleMaterial, lampBulbMaterial])
+      disposeGeometry([roadGeometry, groundGeometry, buildingGeometry, lampPoleGeometry, lampBulbGeometry, laneMarkerGeometry, edgeMarkerGeometry])
+      disposeMaterial([roadMaterial, groundMaterial, buildingMaterial, lampPoleMaterial, lampBulbMaterial, laneMarkerMaterial, edgeMarkerMaterial])
       windowTexture.dispose()
     },
-    [roadGeometry, groundGeometry, buildingGeometry, lampPoleGeometry, lampBulbGeometry, roadMaterial, groundMaterial, buildingMaterial, lampPoleMaterial, lampBulbMaterial, windowTexture],
+    [roadGeometry, groundGeometry, buildingGeometry, lampPoleGeometry, lampBulbGeometry, laneMarkerGeometry, edgeMarkerGeometry, roadMaterial, groundMaterial, buildingMaterial, lampPoleMaterial, lampBulbMaterial, laneMarkerMaterial, edgeMarkerMaterial, windowTexture],
   )
 
   return (
@@ -140,6 +191,8 @@ export function CityScape({ theme, tier }: { theme: SceneTheme; tier: TierSettin
         receiveShadow
       />
       <mesh geometry={roadGeometry} material={roadMaterial} receiveShadow />
+      <instancedMesh ref={laneMarkersRef} args={[laneMarkerGeometry, laneMarkerMaterial, LANE_MARKER_COUNT]} frustumCulled={false} />
+      <instancedMesh ref={edgeMarkersRef} args={[edgeMarkerGeometry, edgeMarkerMaterial, LANE_MARKER_COUNT * 2]} frustumCulled={false} />
       <instancedMesh ref={buildingsRef} args={[buildingGeometry, buildingMaterial, layout.buildings.length]} castShadow receiveShadow frustumCulled={false} />
       <instancedMesh ref={polesRef} args={[lampPoleGeometry, lampPoleMaterial, layout.lamps.length]} frustumCulled={false} />
       <instancedMesh ref={bulbsRef} args={[lampBulbGeometry, lampBulbMaterial, layout.lamps.length]} frustumCulled={false} />

@@ -12,8 +12,16 @@ import { Experience } from './sections/Experience'
 import { Hero } from './sections/Hero'
 import { Projects } from './sections/Projects'
 import { Skills } from './sections/Skills'
+import { JourneyRail, type JourneyStop } from './JourneyRail'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const STATUE_JOURNEY: readonly JourneyStop[] = [
+  { id: 'about', number: '01', label: 'Foundation', landmark: 'The Base' },
+  { id: 'experience', number: '02', label: 'Craft', landmark: 'The Core' },
+  { id: 'projects', number: '03', label: 'Creations', landmark: 'The Ascent' },
+  { id: 'contact', number: '04', label: 'Summit', landmark: 'The Crown' },
+]
 
 interface OverlayProps {
   /** Plain layout: no scroll-driven fades, dashboard rendered in flow. */
@@ -47,14 +55,16 @@ export function Overlay({ staticMode = false }: OverlayProps) {
       gsap.utils.toArray<HTMLElement>('[data-panel]').forEach((panel) => {
         const card = panel.querySelector('[data-card]')
         if (!card) return
+        const revealItems = card.querySelectorAll<HTMLElement>('[data-reveal-item]')
         gsap
           .timeline({
             defaults: { ease: 'none' },
             scrollTrigger: { trigger: panel, start: 'top bottom', end: 'bottom top', scrub: true },
           })
-          .fromTo(card, { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, duration: 0.22 })
-          .to(card, { autoAlpha: 1, duration: 0.56 })
-          .to(card, { autoAlpha: 0, y: -80, duration: 0.22 })
+          .fromTo(card, { autoAlpha: 0, y: 56 }, { autoAlpha: 1, y: 0, duration: 0.22 }, 0)
+          .fromTo(revealItems, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.16, stagger: 0.035 }, 0.12)
+          .to(card, { autoAlpha: 1, duration: 0.55 }, 0.22)
+          .to(card, { autoAlpha: 0, y: -42, duration: 0.22 }, 0.77)
       })
 
       // Grand Finale: reveal the dashboard and keep it. Reverses when scrolling back up.
@@ -91,6 +101,7 @@ export function Overlay({ staticMode = false }: OverlayProps) {
 
   return (
     <div ref={root} className="pointer-events-none relative">
+      <JourneyRail title="The Monument · ascent" stops={STATUE_JOURNEY} />
       {!staticMode && (
         <div aria-hidden="true" className="fixed inset-x-0 top-0 z-40 h-0.5 bg-transparent">
           <div data-progress="" className="h-full origin-left scale-x-0 bg-gold" />

@@ -28,11 +28,10 @@ export const profile: Profile = {
     'Alongside my professional work, I have built academic and full-stack projects, completed industry-oriented internships and technical learning programs, and continue exploring cloud computing, generative AI and modern software engineering practices.',
     'My goal is to build reliable, secure and scalable software that solves meaningful problems.',
   ],
-  // TODO: replace with the real address / profile URLs before publishing.
-  email: 'sekhar@example.com',
+  email: 'vishal944170@gmail.com',
   links: [
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/TODO-your-handle' },
-    { label: 'GitHub', href: 'https://github.com/TODO-your-handle' },
+    { label: 'LinkedIn', href: 'https://linkedin.com/in/sekhar-vishal-0501602b1' },
+    { label: 'GitHub', href: 'https://github.com/sekharvishal' },
   ],
   resumeHref: '/resume.pdf',
 }
@@ -213,6 +212,50 @@ export const skillGroups: SkillGroup[] = [
   {
     name: 'Engineering practice',
     skills: ['Git', 'Debugging', 'Code reviews', 'Agile', 'Production support', 'Secure coding', 'XSS awareness', 'Host Header Injection awareness', 'API integration'],
+  },
+]
+
+/** Expanded, contextual skills page; the original skills matrix above stays unchanged. */
+export const toolkitSkillGroups: SkillGroup[] = [
+  {
+    name: 'Backend',
+    description: 'Java and Spring Boot for application services; REST APIs connect those services to frontend and other system components. Microservices describes an architectural approach, not a claim about a specific project.',
+    skills: [...skillGroups[0].skills, 'Microservices'],
+  },
+  {
+    name: 'Frontend',
+    description: 'Angular and browser technologies for building user-facing application workflows and connecting them to backend services.',
+    skills: [...skillGroups[1].skills],
+  },
+  {
+    name: 'Data & messaging',
+    description: 'Relational and NoSQL databases, SQL, and asynchronous messaging concepts used to persist and exchange application data.',
+    skills: [...skillGroups[2].skills],
+  },
+  {
+    name: 'Cloud & AI',
+    description: 'Cloud and AI technologies, including serverless processing, event streaming, and Python-based data and machine-learning tools.',
+    skills: [...skillGroups[3].skills],
+  },
+  {
+    name: 'AWS cloud & analytics',
+    description: 'AWS Cloud provides the wider platform; RDS is its managed relational database service, Athena queries data using SQL, and Redshift is a cloud data warehouse for analytics.',
+    skills: ['AWS Cloud', 'Amazon RDS', 'Amazon Athena', 'Amazon Redshift'],
+  },
+  {
+    name: 'Containers & delivery',
+    description: 'Docker packages software into containers, Kubernetes orchestrates containerized workloads, and Jenkins automates parts of build and delivery workflows.',
+    skills: ['Docker', 'Kubernetes', 'Jenkins'],
+  },
+  {
+    name: 'Planning & documentation',
+    description: 'Jira is used for work and issue tracking. Atlassian documentation tools support shared project notes and technical knowledge; no specific product is assumed.',
+    skills: ['Jira', 'Atlassian documentation tools'],
+  },
+  {
+    name: 'Engineering practice',
+    description: 'Dependable delivery habits and familiarity across version control, testing, debugging, reviews, security awareness, and collaborative Agile work.',
+    skills: [...skillGroups[4].skills],
   },
 ]
 

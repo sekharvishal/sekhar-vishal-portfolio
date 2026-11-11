@@ -13,8 +13,16 @@ import { Education } from './sections/Education'
 import { Experience } from './sections/Experience'
 import { Projects } from './sections/Projects'
 import { Skills } from './sections/Skills'
+import { JourneyRail, type JourneyStop } from './JourneyRail'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const CITY_JOURNEY: readonly JourneyStop[] = [
+  { id: 'experience', number: '01', label: 'Career', landmark: 'SecureW2 Tower' },
+  { id: 'skills', number: '02', label: 'Skills', landmark: 'Skills Matrix' },
+  { id: 'projects', number: '03', label: 'Projects', landmark: 'Edu Eats Campus' },
+  { id: 'contact', number: '04', label: 'Contact', landmark: 'Grand Finale' },
+]
 
 interface OverlayCityProps {
   /** Plain layout: no scroll-driven fades, dashboard rendered in flow. */
@@ -25,10 +33,18 @@ function IntroHero() {
   return (
     <section data-panel="" className="relative flex min-h-screen items-center justify-center px-5 py-16 md:px-10">
       <GlassCard panel className="w-full max-w-4xl text-center">
-        <p className="eyebrow">The City Drive</p>
+        <p className="eyebrow">Neon Run &middot; The Portfolio Grand Tour</p>
         <h1 className="mt-2 text-5xl md:text-6xl">{profile.name}</h1>
         <p className="mt-4 text-lg text-muted">{profile.headline}</p>
-        <p className="mt-6 font-mono text-xs uppercase tracking-[0.3em] text-gold">Scroll to drive &darr;</p>
+        <p className="mt-6 font-mono text-xs uppercase tracking-[0.3em] text-gold">Scroll to cruise through the portfolio &darr;</p>
+        <ol aria-label="Neon Run route stops" className="mt-8 grid grid-cols-2 gap-2 text-left md:grid-cols-4">
+          {CITY_JOURNEY.map((stop) => (
+            <li key={stop.id} className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
+              <span className="block font-mono text-[0.58rem] tracking-[0.16em] text-gold">{stop.number} / {stop.label}</span>
+              <span className="mt-1 block text-xs text-muted">{stop.landmark}</span>
+            </li>
+          ))}
+        </ol>
       </GlassCard>
     </section>
   )
@@ -46,7 +62,7 @@ function CityChapter({ index, label }: { index: number; label: string }) {
 }
 
 /**
- * HTML layer for the City Drive variant. Same mechanism as the statue's
+ * HTML layer for the Neon Run variant. Same mechanism as the statue's
  * `Overlay.tsx` (pointer-events: none root, per-panel scroll-scrubbed fade,
  * one-shot finale reveal) but content is grouped under the four hero-building
  * stops instead of one continuous flow. Reuses every existing section
@@ -69,14 +85,16 @@ export function OverlayCity({ staticMode = false }: OverlayCityProps) {
       gsap.utils.toArray<HTMLElement>('[data-panel]').forEach((panel) => {
         const card = panel.querySelector('[data-card]')
         if (!card) return
+        const revealItems = card.querySelectorAll<HTMLElement>('[data-reveal-item]')
         gsap
           .timeline({
             defaults: { ease: 'none' },
             scrollTrigger: { trigger: panel, start: 'top bottom', end: 'bottom top', scrub: true },
           })
-          .fromTo(card, { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, duration: 0.22 })
-          .to(card, { autoAlpha: 1, duration: 0.56 })
-          .to(card, { autoAlpha: 0, y: -80, duration: 0.22 })
+          .fromTo(card, { autoAlpha: 0, y: 56 }, { autoAlpha: 1, y: 0, duration: 0.22 }, 0)
+          .fromTo(revealItems, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.16, stagger: 0.035 }, 0.12)
+          .to(card, { autoAlpha: 1, duration: 0.55 }, 0.22)
+          .to(card, { autoAlpha: 0, y: -42, duration: 0.22 }, 0.77)
       })
 
       const reveal = gsap
@@ -112,6 +130,7 @@ export function OverlayCity({ staticMode = false }: OverlayCityProps) {
 
   return (
     <div ref={root} className="pointer-events-none relative">
+      <JourneyRail title="Neon Run · route" stops={CITY_JOURNEY} />
       {!staticMode && (
         <div aria-hidden="true" className="fixed inset-x-0 top-0 z-40 h-0.5 bg-transparent">
           <div data-progress="" className="h-full origin-left scale-x-0 bg-gold" />

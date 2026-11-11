@@ -93,6 +93,17 @@ function ProceduralCar({ theme }: { theme: SceneTheme }) {
       <mesh material={mat.cabin} position={[0, 0.92, 0.25]} castShadow>
         <boxGeometry args={[1.4, 0.5, 1.7]} />
       </mesh>
+      <mesh material={mat.chassis} position={[0, 0.51, -1.86]}>
+        <boxGeometry args={[0.78, 0.16, 0.08]} />
+      </mesh>
+      <mesh material={mat.neon} position={[0, 1.08, 1.55]}>
+        <boxGeometry args={[1.8, 0.08, 0.18]} />
+      </mesh>
+      {[-1, 1].map((side) => (
+        <mesh key={side} material={mat.chassis} position={[side * 0.77, 0.98, 0.05]}>
+          <boxGeometry args={[0.28, 0.12, 0.42]} />
+        </mesh>
+      ))}
       <mesh material={mat.neon} position={[0, 0.22, 0]}>
         <boxGeometry args={[1.9, 0.08, 3.7]} />
       </mesh>
@@ -112,7 +123,15 @@ function ProceduralCar({ theme }: { theme: SceneTheme }) {
   )
 }
 
-function WheelSet({ wheelsRef, material }: { wheelsRef: MutableRefObject<(Mesh | null)[]>; material: MeshStandardMaterial }) {
+function WheelSet({
+  wheelsRef,
+  material,
+  rimMaterial,
+}: {
+  wheelsRef: MutableRefObject<(Mesh | null)[]>
+  material: MeshStandardMaterial
+  rimMaterial: MeshStandardMaterial
+}) {
   return (
     <>
       {WHEEL_OFFSETS.map((pos, i) => (
@@ -125,6 +144,9 @@ function WheelSet({ wheelsRef, material }: { wheelsRef: MutableRefObject<(Mesh |
             castShadow
           >
             <cylinderGeometry args={[0.38, 0.38, 0.26, 16]} />
+          </mesh>
+          <mesh material={rimMaterial}>
+            <cylinderGeometry args={[0.2, 0.2, 0.28, 12]} />
           </mesh>
         </group>
       ))}
@@ -157,12 +179,14 @@ export function VehicleRig({ theme }: { theme: SceneTheme }) {
   const group = useRef<Group>(null)
   const wheels = useRef<(Mesh | null)[]>([null, null, null, null])
   const wheelMaterial = useMemo(() => new MeshStandardMaterial({ color: '#060608', roughness: 0.8 }), [])
+  const wheelRimMaterial = useMemo(() => new MeshStandardMaterial({ color: '#a8b7cc', metalness: 0.85, roughness: 0.22 }), [])
 
   useEffect(
     () => () => {
       disposeMaterial(wheelMaterial)
+      disposeMaterial(wheelRimMaterial)
     },
-    [wheelMaterial],
+    [wheelMaterial, wheelRimMaterial],
   )
 
   useDrivePhysics(group, wheels)
@@ -170,12 +194,14 @@ export function VehicleRig({ theme }: { theme: SceneTheme }) {
   const procedural = (
     <>
       <ProceduralCar theme={theme} />
-      <WheelSet wheelsRef={wheels} material={wheelMaterial} />
+      <WheelSet wheelsRef={wheels} material={wheelMaterial} rimMaterial={wheelRimMaterial} />
     </>
   )
 
   return (
     <group ref={group} name="VehicleRig">
+      <pointLight color="#dcecff" intensity={5} distance={18} decay={2} position={[-0.55, 0.62, -1.9]} />
+      <pointLight color="#dcecff" intensity={5} distance={18} decay={2} position={[0.55, 0.62, -1.9]} />
       {VEHICLE_GLB_URL ? (
         <VehicleBoundary fallback={procedural}>
           <Suspense fallback={null}>

@@ -13,9 +13,9 @@ export function useAnchorNav() {
 
   return useCallback(
     (id: string) => {
-      // `/city` (City Drive) renders the same section ids in its own overlay, so it scrolls in place too.
-      if (pathname !== '/' && pathname !== '/city') {
-        navigate({ pathname: '/', hash: `#${id}` })
+      // `/city` (Neon Run) renders the same section ids in its own overlay, so it scrolls in place too.
+      if (pathname !== '/statue' && pathname !== '/city') {
+        navigate({ pathname: '/statue', hash: `#${id}` })
         return
       }
       const el = document.getElementById(id)

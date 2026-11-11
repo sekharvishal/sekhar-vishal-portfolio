@@ -35,7 +35,7 @@ export function ProjectPage() {
       aria-labelledby="project-title"
       className="glass mx-4 my-28 rounded-3xl px-6 py-10 md:mx-auto md:max-w-4xl md:px-12"
     >
-      <Link to="/#projects" className="pointer-events-auto font-mono text-xs uppercase tracking-[0.2em] text-muted hover:text-gold">
+      <Link to="/statue#projects" className="pointer-events-auto font-mono text-xs uppercase tracking-[0.2em] text-muted hover:text-gold">
         &larr; All projects
       </Link>
 

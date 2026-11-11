@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { credentials, getProject, projects, stats } from '../src/data/content'
+import { credentials, getProject, projects, skillGroups, stats, toolkitSkillGroups } from '../src/data/content'
 
 describe('content honesty rules', () => {
   it('labels Edu Eats as in development', () => {
@@ -32,5 +32,37 @@ describe('content honesty rules', () => {
 
   it('has unique project slugs', () => {
     expect(new Set(projects.map((p) => p.slug)).size).toBe(projects.length)
+  })
+
+  it('adds the requested cloud, delivery, and collaboration tools without duplicate skills', () => {
+    const skills = toolkitSkillGroups.flatMap((group) => group.skills)
+    for (const skill of [
+      'Microservices',
+      'AWS Cloud',
+      'Amazon RDS',
+      'Amazon Athena',
+      'Amazon Redshift',
+      'Docker',
+      'Kubernetes',
+      'Jenkins',
+      'Jira',
+      'Atlassian documentation tools',
+    ]) {
+      expect(skills).toContain(skill)
+    }
+    expect(new Set(skills).size).toBe(skills.length)
+  })
+
+  it('provides contextual descriptions for every skill group', () => {
+    expect(toolkitSkillGroups.every((group) => group.description?.trim().length)).toBeTruthy()
+    expect(toolkitSkillGroups.find((group) => group.name === 'Planning & documentation')?.description).not.toContain('Confluence')
+  })
+
+  it('keeps the original skill matrix unchanged', () => {
+    expect(skillGroups).toHaveLength(5)
+    expect(skillGroups[0].skills).toContain('Spring Boot')
+    expect(skillGroups[0].skills).not.toContain('Microservices')
+    expect(skillGroups[3].skills).toContain('AWS Lambda')
+    expect(skillGroups[4].skills).toContain('Agile')
   })
 })

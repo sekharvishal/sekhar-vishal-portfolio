@@ -32,11 +32,11 @@ Append `?debug` to the URL to draw the camera flight path in the scene.
 | Shared state | `src/state/scrollStore.ts` | Mutable, non-reactive progress / velocity. Read in `useFrame`; never in React state |
 | Camera path | `src/three/cameraPath.ts` | 10-point spiral, `CatmullRomCurve3` (tension 0.5), Frenet-style frame, degenerate-tangent guard |
 | Camera rig | `src/three/CameraRig.tsx` | Pose per frame, slerp smoothing, idle breathing, GSAP finale tween at progress >= 0.95 (hysteresis 0.93) |
-| Statue | `src/three/AvatarStatue.tsx` | Base / Torso / LeftArm / RightArm / Head, ScrollTrigger-scrubbed opacity + `scale.y`; optional clipping-plane mode; optional `.glb` |
+| Statue | `src/three/AvatarStatue.tsx` | Scroll-built procedural sculpture with animated core, orbit trim and shoulder details; optional clipping-plane mode or `.glb` |
 | Dust | `src/three/ParticleField.tsx` | One `InstancedMesh`, one draw call |
 | Post-processing | `src/three/Effects.tsx` | Bloom (1.5 / 0.8), spline-ahead depth of field, velocity-driven chromatic aberration |
 | Memory | `src/three/disposal.ts` | Explicit `.dispose()` for geometries, materials, textures in `useEffect` cleanups |
-| Overlay | `src/ui/Overlay.tsx` | `pointer-events: none` root; glass cards re-enable pointer events; scrubbed fades per section |
+| Overlay | `src/ui/Overlay.tsx` | `pointer-events: none` root; glass cards re-enable pointer events; scrubbed fades and an accessible, active-stage ascent rail with desktop sidebar and mobile dock |
 | Dashboard | `src/ui/Dashboard.tsx` | Revealed at finale and kept; in-flow in static mode |
 
 ### Statue assembly ranges
@@ -51,10 +51,10 @@ Base 0.0-0.2 · Torso 0.2-0.45 · LeftArm 0.45-0.6 · RightArm 0.6-0.75 · Head 
 
 ## Editing content
 
-All copy lives in `src/data/content.ts` (types in `src/data/types.ts`).
+The original portfolio copy and skill matrix live in `src/data/content.ts` (types in `src/data/types.ts`). The separately routed `/toolkit` page adds the expanded, contextual technology groups without changing the original sections.
 
-- Replace the placeholder email and profile URLs in `profile` (search for `TODO`).
-- Replace `public/resume.pdf` with your real résumé.
+- Contact email and profile URLs are configured in `profile`.
+- The supplied résumé is available at `public/resume.pdf`.
 - Add a `verifyUrl` and set `verified: true` on a credential once its exact title is confirmed.
 - Add `links.repo` / `links.demo` to a project when public.
 - Fill in a case study's `result` only with real evidence. Nothing is invented.
@@ -82,21 +82,33 @@ If the file fails to load, the procedural statue is used. To try the shader clip
 
 **Netlify**: build `npm run build`, publish `dist`, and add `public/_redirects` containing `/* /index.html 200`.
 
-## Alternate scene: the City Drive (`/city`)
+## Career constellation (`/nexus`)
 
-A second, independent 3D experience lives at `/city`, picked from the header's **City Drive** / **Statue mode** toggle (next to the theme switch) -- pick whichever fits your mood. It never touches the statue scene: everything lives in new files (`src/three-city/`, `src/state/scrollMapCity.ts`, `src/state/scrollStoreCity.ts`, `src/ui/OverlayCity.tsx`, `src/pages/HomePageCity.tsx`), with only four pure-additive edits to existing files (`routes.tsx` gains a route, `Header.tsx` gains the toggle link, `Layout.tsx` mounts `SceneCity` instead of `Scene` on `/city`, `useAnchorNav` also scrolls in place on `/city`).
+The career constellation is a standalone, résumé-focused portfolio experience. Its orbital visual language organizes Sekhar's professional journey, projects, technical toolkit, engineering practices, education, and learning programs; the cosmic motif is a navigation metaphor, not unrelated science content. Interactive controls let visitors explore roles, projects, and technology groups. Project status and unverified details remain clearly qualified, virtual experiences are distinct from employment, and no unsupported performance metrics are claimed. The route complements rather than replaces the original portfolio, Universe, City, Statue, or `/toolkit`.
 
-Scrolling drives a neon car along a winding road through a small city, past four hero buildings, followed by a GTA-style chase camera:
+## Frontier: the ECE-to-software field guide (`/frontier`)
+
+An independent neon signal archive presenting ECE field explainers, projects, professional and virtual internship experience, education, skills, certification, and contact details as a continuous scroll journey. Each stop pairs an animated technical illustration with a high-contrast, topic-specific explanation; electric color, layered orbits, drifting signal particles, scanning light, and scroll-linked parallax make the stages distinct. ECE explainers are distinguished from supplied personal experience, project descriptions avoid unsupported outcomes, and both internships are labeled virtual. This route complements, rather than replaces, `/nexus` and the existing portfolio worlds.
+
+## Expanded engineering toolkit (`/toolkit`)
+
+The original `/statue`, `/city`, and Universe experiences keep their existing skill groups and profile copy. The separate `/toolkit` route adds the expanded résumé-listed technologies, concise explanations of their general roles, and a conceptual application-to-delivery map. It deliberately does not attribute every listed tool to a specific employer or project.
+
+## Alternate scene: Neon Run (`/city`)
+
+A second, independent 3D experience lives at `/city`, picked from the header's **Neon Run** / **The Monument** links (next to the theme switch) -- pick whichever fits your mood. It never touches the statue scene: everything lives in new files (`src/three-city/`, `src/state/scrollMapCity.ts`, `src/state/scrollStoreCity.ts`, `src/ui/OverlayCity.tsx`, `src/pages/HomePageCity.tsx`), with only four pure-additive edits to existing files (`routes.tsx` gains a route, `Header.tsx` gains the toggle link, `Layout.tsx` mounts `SceneCity` instead of `Scene` on `/city`, `useAnchorNav` also scrolls in place on `/city`).
+
+Scrolling drives a detailed neon car along a winding, lane-marked road through a small city, past four hero buildings, followed by a GTA-style chase camera:
 
 | Piece | File | Notes |
 |-------|------|-------|
-| Road | `src/three-city/roadPath.ts` | 12-point winding XZ-plane spline, `CatmullRomCurve3` (tension 0.5), `frameAt(t)` (Frenet-style tangent/normal/binormal -> quaternion, degenerate-tangent guard), `buildRoadGeometry` |
+| Road | `src/three-city/roadPath.ts` | 12-point winding XZ-plane spline, `CatmullRomCurve3` (tension 0.5), `frameAt(t)` (Frenet-style tangent/normal/binormal -> quaternion, degenerate-tangent guard), `buildRoadGeometry`; road center dashes and illuminated edge markers |
 | Scroll stops | `src/state/scrollMapCity.ts` | `STOPS` at t = 0.22 / 0.46 / 0.70 / 0.95, each with a dwell window; `remap(p)` holds the car at each stop and advances it in between |
 | City | `src/three-city/cityLayout.ts` + `CityScape.tsx` | Seeded, deterministic background-building + street-lamp placement (kept clear of the road corridor), rendered as two `InstancedMesh`es with a canvas-generated emissive window texture |
 | Hero buildings | `src/three-city/HeroBuildings.tsx` | SecureW2 tower, Skills Matrix cube-grid, Edu Eats campus, Grand Finale palace-tower, placed at the four stops, alternating sides of the road |
 | Car | `src/three-city/VehicleRig.tsx` | Procedural neon car (chassis, cabin, spinning wheels, headlights/taillights); position from `curve.getPointAt(remap(progress))`, orientation from the road frame, arcade-style body roll on turns; optional `.glb` slot |
 | Chase camera | `src/three-city/CameraRigCity.tsx` + `chaseCamera.ts` | Trails behind and above the car (`computeChaseTarget`, pure and unit-tested), `MathUtils.damp` smoothing, look-ahead target, speed-based FOV, GSAP pull-back-and-up at the Grand Finale |
-| Overlay | `src/ui/OverlayCity.tsx` | Same `pointer-events: none` + per-panel scroll-scrubbed fade mechanism as `Overlay.tsx`, reusing every existing section component and `Dashboard.tsx` unchanged, grouped under four "Stop 0N" chapter markers |
+| Overlay | `src/ui/OverlayCity.tsx` | Same `pointer-events: none` + per-panel scroll-scrubbed fade mechanism as `Overlay.tsx`, reusing every existing section component and `Dashboard.tsx` unchanged, grouped under four "Stop 0N" chapter markers with an active-stage desktop/mobile route rail |
 
 **Adding a `vehicle.glb`**: author it facing local -Z, then set `VITE_VEHICLE_GLB_URL=/models/vehicle.glb` in `.env.local` (same convention as the statue's `VITE_STATUE_GLB_URL`). If it fails to load, the procedural car is used instead.
 
@@ -111,5 +123,6 @@ Scrolling drives a neon car along a winding road through a small city, past four
 - [ ] E-Doctor Appointment System: repository / demo links, if public.
 - [ ] AI Agent Memory: keep as **Technical Exploration** unless a working system exists; add notes if you ran experiments.
 - [ ] SecureW2 case studies: keep generic (problem, approach, result). No proprietary code, screenshots or architecture.
-- [ ] Email, LinkedIn, GitHub URLs and the résumé file.
+- [x] Email, LinkedIn and GitHub URLs.
+- [x] Add the supplied résumé PDF at `public/resume.pdf`.
 - [ ] Stats ("~1 yr", "6 mo", "3 projects", "9 credentials") still match reality on the day you publish.

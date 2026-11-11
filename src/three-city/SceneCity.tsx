@@ -10,7 +10,7 @@ import { HeroBuildings } from './HeroBuildings'
 import { VehicleRig } from './VehicleRig'
 
 /**
- * Persistent canvas for the City Drive variant, mounted by `Layout.tsx` only
+ * Persistent canvas for the Neon Run variant, mounted by `Layout.tsx` only
  * on the `/city` route (mutually exclusive with the statue's `Scene.tsx`).
  */
 export default function SceneCity() {

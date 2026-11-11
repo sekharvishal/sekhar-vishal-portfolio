@@ -43,6 +43,7 @@ export interface ExperienceItem {
 
 export interface SkillGroup {
   name: string
+  description?: string
   skills: string[]
 }
 
