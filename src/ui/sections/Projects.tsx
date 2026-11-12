@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { publicList } from '../../data/pending'
 import { projects } from '../../data/content'
 import { Section } from '../Section'
 import { StatusBadge } from '../StatusBadge'
@@ -17,8 +18,8 @@ export function Projects() {
               <h3 className="mt-3 text-2xl transition group-hover:text-gold">{project.title}</h3>
               <p className="mt-1 text-sm text-muted">{project.tagline}</p>
               <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Stack">
-                {project.stack.map((s) => (
-                  <li key={s} className={`chip ${s.startsWith('TODO') ? 'border-dashed text-gold' : ''}`}>
+                {publicList(project.stack).map((s) => (
+                  <li key={s} className="chip">
                     {s}
                   </li>
                 ))}

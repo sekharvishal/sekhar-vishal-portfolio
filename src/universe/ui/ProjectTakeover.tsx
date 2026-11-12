@@ -2,14 +2,15 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useLenis } from 'lenis/react'
 import { getProject } from '../../data/content'
+import { isPending, publicList } from '../../data/pending'
 import { uiStore, useUi } from '../universeStore'
 
 function Block({ label, children }: { label: string; children: string }) {
-  const todo = children.includes('TODO')
+  if (isPending(children)) return null
   return (
     <div className="uni-case-block">
       <h3>{label}</h3>
-      <p className={todo ? 'is-todo' : ''}>{children}</p>
+      <p>{children}</p>
     </div>
   )
 }
@@ -52,17 +53,19 @@ export function ProjectTakeover() {
         </h2>
         <p className="uni-lede">{project.summary}</p>
 
-        <ul className="uni-chips">
-          {project.stack.map((s) => (
-            <li key={s} className={`uni-chip ${s.startsWith('TODO') ? 'is-todo' : ''}`}>
-              {s}
-            </li>
-          ))}
-        </ul>
+        {publicList(project.stack).length > 0 && (
+          <ul className="uni-chips">
+            {publicList(project.stack).map((s) => (
+              <li key={s} className="uni-chip">
+                {s}
+              </li>
+            ))}
+          </ul>
+        )}
 
         <h3 className="uni-case-h">{project.status === 'in-development' ? 'Planned features' : 'Features'}</h3>
         <ul className="uni-list">
-          {project.features.map((f) => (
+          {publicList(project.features).map((f) => (
             <li key={f}>{f}</li>
           ))}
         </ul>

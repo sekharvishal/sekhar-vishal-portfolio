@@ -1,15 +1,16 @@
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getProject, projects } from '../data/content'
+import { isPending, publicList } from '../data/pending'
 import { StatusBadge } from '../ui/StatusBadge'
 import { NotFound } from './NotFound'
 
 function CaseBlock({ label, children }: { label: string; children: string }) {
-  const isTodo = children.includes('TODO')
+  if (isPending(children)) return null
   return (
     <div className="glass rounded-2xl p-6">
       <h3 className="eyebrow">{label}</h3>
-      <p className={`mt-3 leading-relaxed ${isTodo ? 'text-muted italic' : 'text-fg'}`}>{children}</p>
+      <p className="mt-3 leading-relaxed text-fg">{children}</p>
     </div>
   )
 }
@@ -53,8 +54,8 @@ export function ProjectPage() {
           Stack
         </h2>
         <ul className="mt-4 flex flex-wrap gap-2">
-          {project.stack.map((item) => (
-            <li key={item} className={`chip ${item.startsWith('TODO') ? 'border-dashed text-gold' : ''}`}>
+          {publicList(project.stack).map((item) => (
+            <li key={item} className="chip">
               {item}
             </li>
           ))}
@@ -66,7 +67,7 @@ export function ProjectPage() {
           {project.status === 'in-development' ? 'Planned features' : 'Features'}
         </h2>
         <ul className="mt-4 space-y-2 text-muted">
-          {project.features.map((f) => (
+          {publicList(project.features).map((f) => (
             <li key={f} className="flex gap-3">
               <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
               {f}

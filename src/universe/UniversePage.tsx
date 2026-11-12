@@ -8,6 +8,7 @@ import { stopAmbient } from './ambientAudio'
 import { usePlace } from './hooks'
 import { accentHex } from './palettes'
 import { TOTAL_VH } from './universeMap'
+import { useTouchMagic } from './touchMagic'
 import { resetUniverse, uiStore, universe, useUi } from './universeStore'
 import { AudioBridge } from './ui/AudioBridge'
 import { ChapterPanels } from './ui/ChapterPanels'
@@ -28,6 +29,7 @@ function UniverseExperience() {
   const lenis = useLenis()
   const mood = useUi((s) => s.mood)
   const { chapter } = usePlace()
+  useTouchMagic(chapter)
 
   // Fresh state on every visit.
   useLayoutEffect(() => {

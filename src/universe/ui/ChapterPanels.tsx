@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   achievements,
@@ -42,7 +42,17 @@ function Dots({ count, active }: { count: number; active: number }) {
 /* ------------------------------ Origin ------------------------------ */
 
 /** The headline gives way to the particle name as the camera closes in. */
+function greeting(): string {
+  const h = new Date().getHours()
+  if (h < 5) return 'Still up? Welcome'
+  if (h < 12) return 'Good morning'
+  if (h < 17) return 'Good afternoon'
+  if (h < 22) return 'Good evening'
+  return 'Late night? Welcome'
+}
+
 function OriginPanel() {
+  const hello = useMemo(greeting, [])
   const ref = useRef<HTMLElement>(null)
   useEffect(() => {
     let raf = 0
@@ -62,6 +72,9 @@ function OriginPanel() {
   return (
     <section ref={ref} className="uni-panel uni-origin" aria-label="Introduction">
       <Eyebrow chapter={0} />
+      <p className="uni-hello uni-rise" style={{ animationDelay: '0.05s' }}>
+        {hello}, I&apos;m Sekhar.
+      </p>
       <p className="uni-display">
         <SplitWords text={profile.headline} delay={0.15} />
       </p>
@@ -73,7 +86,8 @@ function OriginPanel() {
       </p>
       <div className="uni-scroll-cue uni-rise" style={{ animationDelay: '1.1s' }} aria-hidden="true">
         <span />
-        Scroll to travel
+        <em className="uni-cue-fine">Scroll to travel</em>
+        <em className="uni-cue-touch">Swipe up to travel</em>
       </div>
     </section>
   )
@@ -108,7 +122,7 @@ function SkillsPanel({ g }: { g: number }) {
           </li>
         ))}
       </ul>
-      <p className="uni-hint">Hover a chip or a glowing node to light up the link.</p>
+      <p className="uni-hint uni-hint-hover">Hover a chip or a glowing node to light up the link.</p>
       <Dots count={skillGroups.length} active={g} />
     </section>
   )
@@ -196,7 +210,6 @@ const KIND_DOT: Record<CredentialKind, string> = { professional: '#ffd36b', cour
 
 function ArchivePanel({ item }: { item: number }) {
   const hover = useCredentialHover()
-  const anyUnverified = credentials.some((c) => !c.verified)
   return (
     <section className="uni-panel uni-left uni-wide" aria-label={ARCHIVE_ITEMS[item]}>
       <Eyebrow chapter={4} item={item} of={ARCHIVE_ITEMS.length} />
@@ -227,7 +240,6 @@ function ArchivePanel({ item }: { item: number }) {
               </li>
             ))}
           </ul>
-          {anyUnverified && <p className="uni-hint">Exact titles are pending verification against the certificates.</p>}
         </>
       )}
 

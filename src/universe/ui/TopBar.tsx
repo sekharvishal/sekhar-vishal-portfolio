@@ -18,6 +18,9 @@ export function TopBar() {
         <button type="button" onClick={() => run({ type: 'mood' })} data-cursor="Mood" aria-label={`Palette: ${current.label}. Click to change`}>
           <i aria-hidden="true" /> {current.label}
         </button>
+        <a href={profile.resumeHref} target="_blank" rel="noreferrer noopener" className="uni-top-cv" data-cursor="Open">
+          Résumé
+        </a>
         <Link to="/statue" className="uni-top-link" data-cursor="Go">
           The Monument
         </Link>

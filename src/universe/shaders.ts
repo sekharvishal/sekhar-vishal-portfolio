@@ -78,12 +78,19 @@ uniform vec3 uA;
 uniform vec3 uB;
 uniform vec3 uC;
 uniform vec2 uMouse;
+uniform vec2 uTap;
+uniform float uTapT;
+uniform vec2 uRes;
 varying vec3 vDir;
 void main(){
   vec3 d=normalize(vDir);
   vec3 q=d*1.5+vec3(uMouse*0.12,uProgress*4.0);
   float n=fbm(q+vec3(0.0,uTime*0.02,0.0));
+  #ifdef SKY_LITE
+  float n2=snoise(q*2.0-vec3(uTime*0.03,0.0,n))*0.7;
+  #else
   float n2=fbm(q*2.0-vec3(uTime*0.03,0.0,n));
+  #endif
   float cloud=smoothstep(-0.25,0.9,n);
   vec3 col=uA*0.6;
   col=mix(col,uB*0.85,cloud*0.55);
@@ -93,6 +100,17 @@ void main(){
   col+=uB*pow(max(n2,0.0),2.0)*0.35;
   float horizon=smoothstep(0.9,0.0,abs(d.y));
   col+=uA*horizon*0.25;
+  // Tap shockwave: a ring of aurora light that expands from the touch point and fades.
+  if(uTapT<4.0){
+    vec2 sp=(gl_FragCoord.xy/uRes)*2.0-1.0;
+    vec2 off=(sp-uTap)*vec2(uRes.x/uRes.y,1.0);
+    float dist=length(off);
+    float front=uTapT*0.95;
+    float ring=exp(-pow((dist-front)*7.0,2.0));
+    float fade=exp(-uTapT*1.4);
+    col+=mix(uC,vec3(1.0),0.35)*ring*fade*0.9;
+    col+=uB*exp(-dist*3.0)*exp(-uTapT*5.0)*0.5;
+  }
   gl_FragColor=vec4(col,1.0);
   #include <colorspace_fragment>
 }

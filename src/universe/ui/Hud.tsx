@@ -57,7 +57,7 @@ export function Hud() {
         >
           Ask Sekhar
         </button>
-        <button type="button" onClick={() => run({ type: 'palette' })} data-cursor="Search">
+        <button type="button" className="uni-kbd" onClick={() => run({ type: 'palette' })} data-cursor="Search">
           Ctrl K
         </button>
       </div>

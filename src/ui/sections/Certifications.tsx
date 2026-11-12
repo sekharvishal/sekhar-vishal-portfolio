@@ -24,14 +24,10 @@ export function Certifications() {
                   Verify credential
                 </a>
               ) : null}
-              {!c.verified && <span className="chip border-dashed text-gold">verify title</span>}
             </div>
           </li>
         ))}
       </ul>
-      <p className="mt-5 text-sm text-muted">
-        Titles marked &quot;verify&quot; are pending confirmation against the issuer&apos;s certificate.
-      </p>
     </Section>
   )
 }

@@ -19,14 +19,15 @@ interface Budget {
   name: number
   coreDust: number
   skyOctaves: number
+  skyLite: boolean
   post: boolean
   maxDpr: number
 }
 
 const BUDGETS: Record<DeviceTier, Budget> = {
-  high: { stars: 9000, name: 11000, coreDust: 1800, skyOctaves: 5, post: true, maxDpr: 1.75 },
-  medium: { stars: 5000, name: 7000, coreDust: 1000, skyOctaves: 4, post: true, maxDpr: 1.5 },
-  low: { stars: 2200, name: 3800, coreDust: 500, skyOctaves: 3, post: false, maxDpr: 1.25 },
+  high: { stars: 9000, name: 11000, coreDust: 1800, skyOctaves: 5, skyLite: false, post: true, maxDpr: 1.75 },
+  medium: { stars: 5000, name: 7000, coreDust: 1000, skyOctaves: 4, skyLite: false, post: true, maxDpr: 1.5 },
+  low: { stars: 2200, name: 3800, coreDust: 500, skyOctaves: 2, skyLite: true, post: false, maxDpr: 1.25 },
 }
 
 const fillStars = (_: number, out: [number, number, number], rand: () => number) => {
@@ -59,16 +60,18 @@ export default function UniverseScene() {
   const onDecline = useCallback(() => setDpr((d) => Math.max(1, d - 0.25)), [])
 
   return (
-    <div className="fixed inset-0 z-0" aria-hidden="true">
+    // h-[100lvh] stops the mobile address bar resizing the WebGL buffer mid-scroll; inset-0 is the fallback where lvh is unsupported.
+    <div className="fixed inset-0 z-0 h-[100lvh]" aria-hidden="true">
       <Canvas
         dpr={[1, dpr]}
         camera={{ fov: 55, near: 0.1, far: 2000, position: [0, 0, 84] }}
         gl={{ antialias: !budget.post, powerPreference: 'high-performance', alpha: false }}
         frameloop="always"
+        resize={{ scroll: false, debounce: { scroll: 50, resize: 250 } }}
       >
         <color attach="background" args={['#04050a']} />
         <PerformanceMonitor onDecline={onDecline} />
-        <Sky octaves={budget.skyOctaves} />
+        <Sky octaves={budget.skyOctaves} lite={budget.skyLite} />
         <DustCloud count={budget.stars} fill={fillStars} seed={4} size={1} />
         <Suspense fallback={null}>
           <NameParticles maxPoints={budget.name} compact={compact} />

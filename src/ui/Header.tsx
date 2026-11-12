@@ -70,13 +70,6 @@ export function Header() {
         >
           Portfolio
         </Link>
-        <Link
-          to="/frontier"
-          aria-current={inFrontier ? 'page' : undefined}
-          className="glass pointer-events-auto hidden items-center rounded-full px-4 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-gold transition hover:bg-gold/10 sm:flex"
-        >
-          Frontier
-        </Link>
         <details className="pointer-events-auto relative lg:hidden">
           <summary className="glass flex h-10 cursor-pointer list-none items-center rounded-full px-4 font-mono text-xs uppercase tracking-[0.2em] text-fg">
             Menu
@@ -118,17 +111,6 @@ export function Header() {
                 className="block rounded-xl px-3 py-2 font-mono text-xs uppercase tracking-[0.16em] text-gold hover:bg-white/5"
               >
                 Portfolio · career constellation
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/frontier"
-                onClick={(e) => {
-                  ;(e.currentTarget.closest('details') as HTMLDetailsElement | null)?.removeAttribute('open')
-                }}
-                className="block rounded-xl px-3 py-2 font-mono text-xs uppercase tracking-[0.16em] text-gold hover:bg-white/5"
-              >
-                Frontier · technology field guide
               </Link>
             </li>
             {worlds.map((w) => (

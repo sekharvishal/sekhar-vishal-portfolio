@@ -1089,3 +1089,98 @@ html.uni-cursor-on * {
     animation-duration: 0.001ms !important;
   }
 }
+
+/* ---------------------------------------------------------------- touch / small-screen performance
+   The WebGL canvas repaints every frame, so anything that samples what is behind it
+   (backdrop blur, blend modes) is re-composited every frame too. That is cheap on a
+   desktop GPU and the main cause of jank on phones. Trade the blur for a more opaque
+   glass tint, which looks nearly identical over a dark scene. */
+@media (pointer: coarse), (max-width: 820px) {
+  .uni {
+    --uni-glass: rgb(8 10 18 / 0.82);
+  }
+  .uni *,
+  .uni *::before,
+  .uni *::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .uni-grain {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------- input-aware copy and short phones */
+
+.uni-scroll-cue em {
+  font-style: normal;
+}
+.uni-cue-touch {
+  display: none;
+}
+@media (pointer: coarse) {
+  .uni-cue-fine,
+  .uni-hint-hover,
+  .uni-kbd {
+    display: none;
+  }
+  .uni-cue-touch {
+    display: inline;
+  }
+}
+
+/* Short phones (older iPhones, landscape): keep the active panel inside the viewport. */
+@media (max-width: 820px) and (max-height: 760px) {
+  .uni-panel {
+    bottom: 5rem;
+    padding: 1.1rem 1.2rem 1rem;
+  }
+  .uni-lede {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .uni-list {
+    gap: 0.4rem;
+    font-size: 0.86rem;
+  }
+  .uni-list li:nth-child(n + 4) {
+    display: none;
+  }
+  .uni-hint {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------- greeting + always-visible résumé */
+
+.uni-hello {
+  margin: 0.2rem 0 0.6rem;
+  font: 500 0.78rem/1.4 var(--uni-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--uni-accent);
+}
+.uni-top-cv {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 0.95rem;
+  border: 1px solid var(--uni-accent);
+  border-radius: 999px;
+  background: var(--uni-glass);
+  font: 600 0.66rem/1 var(--uni-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--uni-accent);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.uni-top-cv:hover {
+  background: var(--uni-accent);
+  color: #04050a;
+}
+@media (max-width: 380px) {
+  .uni-top-cv {
+    padding: 0.5rem 0.7rem;
+    letter-spacing: 0.1em;
+  }
+}

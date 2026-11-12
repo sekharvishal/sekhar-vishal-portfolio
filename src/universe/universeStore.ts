@@ -14,6 +14,10 @@ export const universe = {
   /** Raw pointer in NDC (-1..1), written by the page's pointermove listener. */
   pointerX: 0,
   pointerY: 0,
+  /** Last touch point in NDC. `tapPending` is consumed by the Sky shader to start a ripple. */
+  tapX: 0,
+  tapY: 0,
+  tapPending: false,
   /** Smoothed pointer in NDC (-1..1). */
   mouseX: 0,
   mouseY: 0,

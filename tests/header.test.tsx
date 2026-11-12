@@ -12,7 +12,7 @@ vi.mock('../src/ui/ThemeToggle', () => ({
 }))
 
 describe('Header world navigation', () => {
-  it('keeps the other portfolio worlds reachable from the compact menu', () => {
+  it('keeps the other portfolio worlds reachable without listing the direct-only Frontier route', () => {
     render(
       <MemoryRouter initialEntries={['/statue']}>
         <Header />
@@ -24,7 +24,7 @@ describe('Header world navigation', () => {
     expect(menu.getByRole('link', { name: 'Universe' })).toHaveAttribute('href', '/')
     expect(menu.getByRole('link', { name: 'Neon Run' })).toHaveAttribute('href', '/city')
     expect(menu.getByRole('link', { name: 'Portfolio · career constellation' })).toHaveAttribute('href', '/nexus')
-    expect(menu.getByRole('link', { name: 'Frontier · technology field guide' })).toHaveAttribute('href', '/frontier')
+    expect(menu.queryByRole('link', { name: /Frontier/i })).not.toBeInTheDocument()
   })
 
   it('closes the compact menu when a world is selected', () => {

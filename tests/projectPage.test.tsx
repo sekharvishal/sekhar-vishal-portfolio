@@ -34,9 +34,10 @@ describe('ProjectPage', () => {
     }
   })
 
-  it('shows a visible TODO marker for the unconfirmed stack', () => {
+  it('never shows author-only TODO placeholders to visitors', () => {
     renderAt('/projects/student-information-management')
-    expect(screen.getByText('TODO: confirm')).toBeInTheDocument()
+    expect(screen.queryByText(/TODO/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Problem' })).toBeInTheDocument()
   })
 
   it('falls back to the not-found page for unknown slugs', () => {
